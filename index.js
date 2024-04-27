@@ -27,6 +27,8 @@ async function run() {
     await client.connect();
 
     const touristSpotCollection = client.db("touristSpotDB").collection("touristSpot");
+
+    const testimonialCollection = client.db("sohagislambd1998").collection("Testimonials");
     // const userCollection = client.db("countryDB").collection("countrySpot");
 
     // app.post('/users', async (req, res) => {
@@ -94,6 +96,11 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result)
     })
+    app.get('/testimonials', async (req, res) => {
+      const cursor = testimonialCollection.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
 
     // app.get('/tourist-spot/:email', async (req, res) => {
     //   const userEmail = req.params.email;
@@ -111,9 +118,15 @@ async function run() {
     })
 
     app.post('/add-tourist-spot', async (req, res) => {
-      const coffee = req.body;
-      console.log(coffee);
-      const result = await touristSpotCollection.insertOne(coffee);
+      const spot = req.body;
+      console.log(spot);
+      const result = await touristSpotCollection.insertOne(spot);
+      res.send(result);
+    })
+    app.post('/testimonials', async (req, res) => {
+      const testimonial = req.body;
+      console.log(testimonial);
+      const result = await touristSpotCollection.insertOne(testimonial);
       res.send(result);
     })
 
