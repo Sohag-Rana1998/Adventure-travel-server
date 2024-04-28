@@ -23,20 +23,25 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
+
     // await client.connect();
 
     const touristSpotCollection = client.db("touristSpotDB").collection("touristSpot");
 
     const testimonialCollection = client.db("sohagislambd1998").collection("Testimonials");
+
     const countriesCollection = client.db("sohagislambd1998").collection("countriesDB");
 
     // Get All Spots Data From Here
+
     app.get('/tourist-spot', async (req, res) => {
       const cursor = touristSpotCollection.find();
       const result = await cursor.toArray();
       res.send(result)
     })
+
+
+    // Get Reviews data From Here
 
     app.get('/testimonials', async (req, res) => {
       const cursor = testimonialCollection.find();
