@@ -24,91 +24,32 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const touristSpotCollection = client.db("touristSpotDB").collection("touristSpot");
 
     const testimonialCollection = client.db("sohagislambd1998").collection("Testimonials");
-    // const userCollection = client.db("countryDB").collection("countrySpot");
+    const countriesCollection = client.db("sohagislambd1998").collection("countriesDB");
 
-    // app.post('/users', async (req, res) => {
-    //   const user = req.body;
-    //   console.log(user);
-    //   const result = await userCollection.insertOne(user);
-    //   res.send(result)
-
-    // })
-
-    // app.get('/users', async (req, res) => {
-    //   const cursor = userCollection.find();
-    //   const result = await cursor.toArray();
-    //   res.send(result)
-
-
-    // })
-
-    // app.get('/users/:id', async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) }
-    //   const result = await userCollection.findOne(query);
-    //   res.send(result)
-    // })
-
-
-    // app.patch('/users', async (req, res) => {
-    //   const user = req.body;
-    //   const filter = {
-    //     email: user.email,
-    //   }
-    //   const updateUser = {
-    //     $set: {
-    //       name: user?.name,
-
-    //     }
-    //   }
-    //   const result = await userCollection.updateOne(filter, updateUser);
-    //   res.send(result)
-    // })
-    // app.put('/users', async (req, res) => {
-    //   const user = req.body;
-    //   const filter = {
-    //     email: user.email,
-    //   }
-    //   const updateUser = {
-    //     $set: {
-    //       signInTime: user.signInTime,
-    //     }
-    //   }
-    //   const result = await userCollection.updateOne(filter, updateUser);
-    //   res.send(result)
-    // })
-
-    // app.delete('/users/:id', async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) }
-    //   const result = await userCollection.deleteOne(query);
-    //   res.send(result)
-    // })
-
-
+    // Get All Spots Data From Here
     app.get('/tourist-spot', async (req, res) => {
       const cursor = touristSpotCollection.find();
       const result = await cursor.toArray();
       res.send(result)
     })
+
     app.get('/testimonials', async (req, res) => {
       const cursor = testimonialCollection.find();
       const result = await cursor.toArray();
       res.send(result)
     })
 
-    // app.get('/tourist-spot/:email', async (req, res) => {
-    //   const userEmail = req.params.email;
-    //   console.log(userEmail);
-    //   const query = { email: new userEmail }
-    //   const result = await touristSpotCollection.find(query).toArray;
-    //   res.send(result)
-    // })
+    app.get('/countries', async (req, res) => {
+      const cursor = countriesCollection.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+
 
     app.get('/tourist-spot/:id', async (req, res) => {
       const id = req.params.id;
@@ -116,6 +57,24 @@ async function run() {
       const result = await touristSpotCollection.findOne(query)
       res.send(result)
     })
+
+    app.get("/country/:CountryName", async (req, res) => {
+
+      const CountryName = req.params.CountryName;
+      console.log(CountryName);
+      const result = await touristSpotCollection.find({ CountryName: CountryName }).toArray();
+
+      res.send(result)
+    })
+
+
+    app.get("/email/:email", async (req, res) => {
+      console.log(req.params.email);
+      const result = await touristSpotCollection.find({ email: req.params.email }).toArray();
+      res.send(result)
+    })
+
+
 
     app.post('/add-tourist-spot', async (req, res) => {
       const spot = req.body;
@@ -186,7 +145,7 @@ async function run() {
     })
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
