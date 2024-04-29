@@ -49,13 +49,15 @@ async function run() {
       res.send(result)
     })
 
+
+    // Get countries data from here
     app.get('/countries', async (req, res) => {
       const cursor = countriesCollection.find();
       const result = await cursor.toArray();
       res.send(result)
     })
 
-
+    // Get single tourists spot data by id from here
     app.get('/tourist-spot/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -63,16 +65,16 @@ async function run() {
       res.send(result)
     })
 
+    // Get single countries tourists spot data by countryName from here
     app.get("/country/:CountryName", async (req, res) => {
-
       const CountryName = req.params.CountryName;
       console.log(CountryName);
       const result = await touristSpotCollection.find({ CountryName: CountryName }).toArray();
-
       res.send(result)
     })
 
 
+    // Get User Data By Email
     app.get("/email/:email", async (req, res) => {
       console.log(req.params.email);
       const result = await touristSpotCollection.find({ email: req.params.email }).toArray();
@@ -80,13 +82,15 @@ async function run() {
     })
 
 
-
+    //  Insert a single tourists spot from here
     app.post('/add-tourist-spot', async (req, res) => {
       const spot = req.body;
       console.log(spot);
       const result = await touristSpotCollection.insertOne(spot);
       res.send(result);
     })
+
+    // Insert a single customer review from here
     app.post('/testimonials', async (req, res) => {
       const testimonial = req.body;
       console.log(testimonial);
@@ -94,6 +98,7 @@ async function run() {
       res.send(result);
     })
 
+    // Update a single tourists spot data from here
     app.put("/tourist-spot/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
@@ -117,6 +122,8 @@ async function run() {
       const result = await touristSpotCollection.updateOne(filter, coffee, options);
       res.send(result)
     })
+
+    // Update a single tourists spot data from here
     app.patch("/tourist-spot/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
@@ -142,6 +149,7 @@ async function run() {
     })
 
 
+    // Delete a tourists spot by id here
     app.delete("/tourist-spot/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
