@@ -65,6 +65,14 @@ async function run() {
       res.send(result)
     })
 
+    // Get single review here
+    app.get('/testimonials/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await testimonialCollection.findOne(query)
+      res.send(result)
+    })
+
     // Get single countries tourists spot data by countryName from here
     app.get("/country/:CountryName", async (req, res) => {
       const CountryName = req.params.CountryName;
