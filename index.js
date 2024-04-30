@@ -99,10 +99,10 @@ async function run() {
     })
 
     // Insert a single customer review from here
-    app.post('/testimonials', async (req, res) => {
+    app.post('/add-testimonials', async (req, res) => {
       const testimonial = req.body;
       console.log(testimonial);
-      const result = await touristSpotCollection.insertOne(testimonial);
+      const result = await testimonialCollection.insertOne(testimonial);
       res.send(result);
     })
 
