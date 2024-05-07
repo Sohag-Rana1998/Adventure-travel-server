@@ -1,11 +1,20 @@
 const express = require("express");
 const app = express();
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser')
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://travel-zone-client-side.web.app', 'https://travel-zone-client-side.web.app'],
+  credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser())
 const port = process.env.PORT || 5000;
+
+
+
 
 
 
@@ -21,6 +30,37 @@ const client = new MongoClient(uri, {
   }
 });
 
+
+
+
+const logger = (req, res, next) => {
+  console.log('log info', req.method, req.url);
+  next();
+}
+const verifyToken = (req, res, next) => {
+  const token = req?.cookies?.token;
+  console.log('token:', token);
+  if (!token) {
+    return res.status(401).send({ message: 'Unauthorized access' })
+  }
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).send({ message: 'Unauthorized access' })
+    }
+    req.user = decoded
+    next();
+  })
+
+}
+
+
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production" ? true : false,
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+};
+
 async function run() {
   try {
 
@@ -31,6 +71,27 @@ async function run() {
     const testimonialCollection = client.db("sohagislambd1998").collection("Testimonials");
 
     const countriesCollection = client.db("sohagislambd1998").collection("countriesDB");
+
+
+
+    app.post('/jwt', async (req, res) => {
+      const user = req.body;
+      console.log('User for token', user);
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+      res
+        .cookie('token', token, cookieOptions)
+        .send({ success: true })
+    })
+
+
+    app.post('/logout', async (req, res) => {
+      const user = req.user;
+      console.log('from logout', user);
+      res.clearCookie("token", { ...cookieOptions, maxAge: 0 })
+        .send({ success: true });
+    })
+
+
 
     // Get All Spots Data From Here
 
@@ -83,9 +144,17 @@ async function run() {
 
 
     // Get User Data By Email
-    app.get("/email/:email", async (req, res) => {
-      console.log(req.params.email);
-      const result = await touristSpotCollection.find({ email: req.params.email }).toArray();
+    app.get("/mylist", logger, verifyToken, async (req, res) => {
+      console.log(req.query?.email);
+      console.log(req.user);
+      if (req.query.email !== req.user.email) {
+        return res.status(403).send({ message: 'Forbidden excess' })
+      }
+      let query = {};
+      if (req.query?.email) {
+        query = { email: req.query.email }
+      }
+      const result = await touristSpotCollection.find(query).toArray();
       res.send(result)
     })
 
