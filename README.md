@@ -9,7 +9,7 @@
 1. Clone the Repository:
 
 - git clone https://github.com/Sohag-Rana1998/Adventure-travel-server.git
-- cd e-store-server
+- cd Adventure-travel-server
 
 2. Install Global Packages (if not already installed): Make sure you have npm
    installed globally. If you need any specific tools like nodemon for
